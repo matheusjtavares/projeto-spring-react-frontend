@@ -2,12 +2,12 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 
-
+import DOMPurify from "dompurify";
 import CustomInput from "../components/CustomInput/CustomInput.js";
 import Button from "../components/CustomButtons/Button.js";
 import Card from "../components/Card/Card.js";
 import CardBody from "../components/Card/CardBody.js";
-
+import { getAvistamentoElastic } from '../services/AvistamentoElastic';
 
 export default function HomePage() {
     const router = useRouter();
@@ -45,9 +45,13 @@ export default function HomePage() {
         setExpandedId(null);
     }
 
-    function handleSearch(e) {
+    async function handleSearch(e) {
         e.preventDefault();
-        setResults(MOCK_DATA);
+        const data =  await getAvistamentoElastic(query);
+        console.log("data", data);
+        setResults(
+            [...data].sort((a, b) => a.score- b.score),
+        );
 
         // fecha tudo ao fazer nova busca
         setExpandedId(null);
@@ -196,7 +200,7 @@ export default function HomePage() {
                             {results.map((item, index) => {
                                 const urlFake = `ufo.tracker/avistamentos/${item.id}`;
                                 const isOpen = expandedId === item.id;
-
+                                const safeHtml = DOMPurify.sanitize(item.descricaoFormatada);
                                 return (
                                     <div
                                         key={item.id}
@@ -283,7 +287,7 @@ export default function HomePage() {
                                                     lineHeight: 1.5
                                                 }}
                                             >
-                                                {item.descricao}
+                                                <p dangerouslySetInnerHTML={{ __html: safeHtml }} />
                                             </div>
                                         )}
                                     </div>

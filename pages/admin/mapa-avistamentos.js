@@ -8,7 +8,8 @@ import CardHeader from "/components/Card/CardHeader.js";
 import CardBody from "/components/Card/CardBody.js";
 import Button from "/components/CustomButtons/Button.js";
 import CustomInput from "/components/CustomInput/CustomInput.js";
-
+import { getGeoLocFromCity, getAvistamentosPorProximidade} from '../../services/AvistamentoElastic'
+import dynamic from "next/dynamic";
 const useStyles = makeStyles((theme) => ({
     inputWhite: {
         "& input": {
@@ -204,7 +205,10 @@ const MOCK_AVISTAMENTOS = [
         descricao: "Orbe alaranjado sobre a orla.",
     },
 ];
-
+const UfoPlainMap = dynamic(
+    () => import("../../components/UfoMap/UfoPlainMap"),
+    { ssr: false }
+);
 function MapaAvistamentosAdmin() {
     const classes = useStyles();
 
@@ -250,17 +254,21 @@ function MapaAvistamentosAdmin() {
 
     const handleBuscar = async (e) => {
         e.preventDefault();
-        console.log("Aqui1!!!")
+        const cidade = await getGeoLocFromCity(cidadeBusca)
+        const result = await getAvistamentosPorProximidade(cidade,200)
+        console.log(result)
         setLoading(true);
         setResultados([]);
         setCenter(null);
 
         try {
-            const { center: novoCentro, resultados: novos } =
-                await buscarAvistamentosPorCidadeMock(cidadeBusca);
 
-            setCenter(novoCentro);
-            setResultados(novos);
+            const cidade = await getGeoLocFromCity(cidadeBusca)
+            const result = await getAvistamentosPorProximidade(cidade,200)
+            console.log(cidade)
+
+            setCenter({lat:cidade.lat, lon:cidade.lon});
+            setResultados(result);
         } finally {
             setLoading(false);
         }
@@ -323,52 +331,7 @@ function MapaAvistamentosAdmin() {
                     </form>
 
                     <div className={classes.mapContainer}>
-                        <div className={classes.mapGrid} />
-                        {loading && (
-                            <div className={classes.loadingOverlay}>
-                                <div>
-                                    <div className={classes.spinner} />
-                                    <div className={classes.loadingText}>
-                                        Calculando rota intergaláctica... 🛸
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-                        {center && (
-                            <div className={classes.mapCenter} title="Centro aproximado" />
-                        )}
-
-                        {resultados.map((a, index) => {
-                            const pos = getMarkerPosition(a, index);
-                            return (
-                                <div
-                                    key={a.id}
-                                    className={classes.marker}
-                                    style={pos}
-                                    title={`${a.cidade} - ${a.estado}`}
-                                >
-                                    <div className={classes.markerLabel}>
-                                        {a.cidade} ({a.tipoObjeto})
-                                    </div>
-                                </div>
-                            );
-                        })}
-
-                        {!center && (
-                            <div
-                                style={{
-                                    position: "absolute",
-                                    inset: 0,
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    fontSize: "0.9rem",
-                                    color: "#9ca3af",
-                                }}
-                            >
-                                Digite uma cidade acima para ver os avistamentos no “radar”.
-                            </div>
-                        )}
+                        <UfoPlainMap center={center} resultados={resultados} />
                     </div>
 
                     <div className={classes.listContainer}>
