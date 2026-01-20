@@ -40,6 +40,7 @@
     "@nivo/line": "^0.99.0",
     "@nivo/pie": "^0.99.0",
     "classnames": "2.3.2",
+    "clean": "^4.0.2",
     "dompurify": "^3.3.1",
     "leaflet": "^1.9.4",
     "moment": "^2.29.4",
