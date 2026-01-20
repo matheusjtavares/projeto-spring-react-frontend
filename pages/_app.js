@@ -54,7 +54,8 @@ export default class MyApp extends App {
   }
   render() {
     const { Component, pageProps } = this.props;
-
+    const APP_TITLE = process.env.NEXT_PUBLIC_APP_TITLE;
+    
     return (
       <React.Fragment>
         <Head>
@@ -62,7 +63,7 @@ export default class MyApp extends App {
             name="viewport"
             content="width=device-width, initial-scale=1, shrink-to-fit=no"
           />
-          <title>NextJS Material Kit by Creative Tim</title>
+          <title>{APP_TITLE}</title>
         </Head>
         <Component {...pageProps} />
       </React.Fragment>
