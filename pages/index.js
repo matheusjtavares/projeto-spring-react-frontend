@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import styles from "../styles/Home.module.css";
-import { getCars,createCar } from "../services/carService";
+import { getCars,createCar, deleteCar, updateCar } from "../services/carService";
 import AddCarModal from "../components/CreatedComponents/AddCarModal";
+import EditCarModal from "../components/CreatedComponents/EditCarModal";
 
 export default function Home() {
     // Initiate and get table items
@@ -25,14 +26,46 @@ export default function Home() {
     };
     // State for modal management
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
     const handleAddCar = async (car) => {
         try {
-            await createCar(car);
+            await updateCar(car);
             setIsAddModalOpen(false);
             loadCars(); // atualiza a lista
         } catch (err) {
             alert(err.message);
         }
+    };
+
+    const handleDeleteCar = async (id)=>{
+        console.log()
+        try {
+            await deleteCar(id);
+            loadCars(); // atualiza a lista
+        } catch (err) {
+            alert(err.message);
+        }
+    }
+
+    // Edit 
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [editingCar, setEditingCar] = useState(null);
+
+    const handleEditCarModal = (car) => {
+        setEditingCar(car);
+        setIsEditModalOpen(true);
+    };
+    const handleEditCar = async (car) => {
+        try {
+            await updateCar(editingCar,car);
+            loadCars(); // atualiza a lista
+        } catch (err) {
+            alert(err.message);
+        }
+    };
+    const closeEditModal = () => {
+        setIsEditModalOpen(false);
+        setEditingCar(null);
     };
     return (
         <div className={styles.container}>
@@ -80,8 +113,8 @@ export default function Home() {
                                 <td>{car.fabricante}</td>
                                 <td>{car.pais}</td>
                                 <td className={styles.actions}>
-                                <button className={styles.editButton}>Editar</button>
-                                <button className={styles.deleteButton}>Deletar</button>
+                                <button className={styles.editButton} onClick={()=>handleEditCarModal(car)}>Editar</button>
+                                <button className={styles.deleteButton} onClick={()=>handleDeleteCar(car.id)}>Deletar</button>
                                 </td>
                             </tr>
                             ))}
@@ -93,6 +126,12 @@ export default function Home() {
                 isOpen={isAddModalOpen}
                 onClose={() => setIsAddModalOpen(false)}
                 onSave={handleAddCar}
+            />
+            <EditCarModal
+                isOpen={isEditModalOpen}
+                onClose={() => closeEditModal()}
+                onSave={handleEditCar}
+                editingCar={editingCar}
             />
         </div>
         
