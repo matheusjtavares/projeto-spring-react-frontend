@@ -1,6 +1,9 @@
 .container {
   padding: 32px;
   font-family: Arial, Helvetica, sans-serif;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .header {
@@ -26,6 +29,13 @@
 .addButton:hover {
   background-color: #125aa0;
 }
+
+/* wrapper da tabela */
+.tableWrapper {
+  height: 100%;
+  overflow-y: scroll; 
+}
+
 
 .table {
   width: 100%;

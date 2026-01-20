@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "../styles/Home.module.css";
-import { getCars } from "../services/carService";
+import { getCars,createCar } from "../services/carService";
 import AddCarModal from "../components/CreatedComponents/AddCarModal";
 
 export default function Home() {
@@ -14,18 +14,26 @@ export default function Home() {
     }, []);
 
     const loadCars = async () => {
-    try {
-        const data = await getCars();
-        setCars(data);
-    } catch (err) {
-        setError(err.message);
-    } finally {
-        setLoading(false);
-    }
+        try {
+            const data = await getCars();
+            setCars(data);
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+        }
     };
     // State for modal management
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-
+    const handleAddCar = async (car) => {
+        try {
+            await createCar(car);
+            setIsAddModalOpen(false);
+            loadCars(); // atualiza a lista
+        } catch (err) {
+            alert(err.message);
+        }
+    };
     return (
         <div className={styles.container}>
             <header className={styles.header}>
@@ -47,41 +55,44 @@ export default function Home() {
             {error && <p style={{ color: "red" }}>{error}</p>}
 
             {!loading && !error && (
-                <table className={styles.table}>
-                <thead>
-                    <tr>
-                    <th>ID</th>
-                    <th>Modelo</th>
-                    <th>Ano</th>
-                    <th>Cor</th>
-                    <th>Potência (cv)</th>
-                    <th>Fabricante</th>
-                    <th>País</th>
-                    <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {cars.map((car) => (
-                    <tr key={car.id}>
-                        <td>{car.id}</td>
-                        <td>{car.modelo}</td>
-                        <td>{car.ano}</td>
-                        <td>{car.cor}</td>
-                        <td>{car.cavalosDePotencia}</td>
-                        <td>{car.fabricante}</td>
-                        <td>{car.pais}</td>
-                        <td className={styles.actions}>
-                        <button className={styles.editButton}>Editar</button>
-                        <button className={styles.deleteButton}>Deletar</button>
-                        </td>
-                    </tr>
-                    ))}
-                </tbody>
-                </table>
+                <div className={styles.tableWrapper}>
+                    <table className={styles.table}>
+                        <thead>
+                            <tr>
+                            <th>ID</th>
+                            <th>Modelo</th>
+                            <th>Ano</th>
+                            <th>Cor</th>
+                            <th>Potência (cv)</th>
+                            <th>Fabricante</th>
+                            <th>País</th>
+                            <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {cars.map((car) => (
+                            <tr key={car.id}>
+                                <td>{car.id}</td>
+                                <td>{car.modelo}</td>
+                                <td>{car.ano}</td>
+                                <td>{car.cor}</td>
+                                <td>{car.cavalosDePotencia}</td>
+                                <td>{car.fabricante}</td>
+                                <td>{car.pais}</td>
+                                <td className={styles.actions}>
+                                <button className={styles.editButton}>Editar</button>
+                                <button className={styles.deleteButton}>Deletar</button>
+                                </td>
+                            </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             )}
             <AddCarModal
                 isOpen={isAddModalOpen}
                 onClose={() => setIsAddModalOpen(false)}
+                onSave={handleAddCar}
             />
         </div>
         
