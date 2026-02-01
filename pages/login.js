@@ -1,11 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Icon from "@material-ui/core/Icon";
 // @material-ui/icons
 import Email from "@material-ui/icons/Email";
-import People from "@material-ui/icons/People";
 // core components
 import Header from "/components/Header/Header.js";
 import HeaderLinks from "/components/Header/HeaderLinks.js";
@@ -20,11 +19,17 @@ import CardFooter from "/components/Card/CardFooter.js";
 import CustomInput from "/components/CustomInput/CustomInput.js";
 
 import styles from "/styles/jss/nextjs-material-kit/pages/loginPage.js";
-
+import { postUser } from "../services/loginService";
 const useStyles = makeStyles(styles);
 
 export default function LoginPage(props) {
   const [cardAnimaton, setCardAnimation] = React.useState("cardHidden");
+  const classes = useStyles();
+  const { ...rest } = props;
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
 
   React.useEffect(() => {
     const timer = setTimeout(() => {
@@ -32,9 +37,29 @@ export default function LoginPage(props) {
     }, 700);
     return () => clearTimeout(timer);
   }, []);
+  const handleChange = (prop) => (event) => {
+    setFormData({ ...formData, [prop]: event.target.value });
+  };
 
-  const classes = useStyles();
-  const { ...rest } = props;
+  // 3. Handle Login / Fetch
+  const handlePostUser = async (e) => {
+    e.preventDefault(); // Prevent page reload
+
+    // Basic Validation
+    if (!formData.email || !formData.password) {
+      alert("Please fill in all fields");
+      return;
+    }
+    try {
+      console.log("Sending data:", formData);
+      await postUser(formData);
+      // Add logic here to handle success (e.g., redirect or save token)
+      window.location.href = "/";
+    } catch (err) {
+      console.error("Login Error:", err);
+      alert(err.message || "An error occurred during login.");
+    }
+  };
 
   return (
     <div>
@@ -94,6 +119,9 @@ export default function LoginPage(props) {
                       }}
                       inputProps={{
                         type: "email",
+                        // 4. Bind value and onChange
+                        value: formData.email,
+                        onChange: handleChange("email"),
                         endAdornment: (
                           <InputAdornment position="end">
                             <Email className={classes.inputIconsColor} />
@@ -110,6 +138,9 @@ export default function LoginPage(props) {
                       }}
                       inputProps={{
                         type: "password",
+                        // 4. Bind value and onChange
+                        value: formData.password,
+                        onChange: handleChange("password"),
                         endAdornment: (
                           <InputAdornment position="end">
                             <Icon className={classes.inputIconsColor}>
@@ -123,19 +154,11 @@ export default function LoginPage(props) {
                   </CardBody>
 
                   <CardFooter className={classes.cardFooter}>
-                    <Button color="info" size="lg">
+                    {/* 5. Attach the click handler */}
+                    <Button color="info" size="lg" onClick={handlePostUser}>
                       Login
                     </Button>
                   </CardFooter>
-
-                  <div
-                    style={{
-                      textAlign: "center",
-                      fontSize: "0.8rem",
-                      marginBottom: "10px",
-                      color: "rgba(100,155,255,0.8)",
-                    }}
-                  ></div>
                 </form>
               </Card>
             </GridItem>
