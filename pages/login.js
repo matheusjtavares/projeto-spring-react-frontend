@@ -24,148 +24,125 @@ import styles from "/styles/jss/nextjs-material-kit/pages/loginPage.js";
 const useStyles = makeStyles(styles);
 
 export default function LoginPage(props) {
-    const [cardAnimaton, setCardAnimation] = React.useState("cardHidden");
+  const [cardAnimaton, setCardAnimation] = React.useState("cardHidden");
 
-    React.useEffect(() => {
-        const timer = setTimeout(() => {
-            setCardAnimation("");
-        }, 700);
-        return () => clearTimeout(timer);
-    }, []);
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      setCardAnimation("");
+    }, 700);
+    return () => clearTimeout(timer);
+  }, []);
 
-    const classes = useStyles();
-    const { ...rest } = props;
+  const classes = useStyles();
+  const { ...rest } = props;
 
-    return (
-        <div>
+  return (
+    <div>
+      <div
+        className={classes.pageHeader}
+        style={{
+          backgroundImage: "url('/img/ufo-gb.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center center",
+        }}
+      >
+        <div className={classes.container}>
+          <GridContainer justify="center">
+            <GridItem xs={12} sm={6} md={4}>
+              <Card className={classes[cardAnimaton]}>
+                <form className={classes.form}>
+                  <CardHeader color="info" className={classes.cardHeader}>
+                    <h4>Cars Portal</h4>
+                    <div
+                      style={{
+                        fontSize: "0.85rem",
+                        opacity: 0.9,
+                        marginTop: "4px",
+                      }}
+                    >
+                      Cars API Access Management
+                    </div>
+                    <div className={classes.socialLine}>
+                      <Button
+                        justIcon
+                        href="#"
+                        color="transparent"
+                        onClick={(e) => e.preventDefault()}
+                      >
+                        <i className={"fas fa-satellite"} />
+                      </Button>
 
-            <div
-                className={classes.pageHeader}
-                style={{
-                    backgroundImage: "url('/img/ufo-gb.png')",
-                    backgroundSize: "cover",
-                    backgroundPosition: "center center"
-                }}
-            >
-                <div className={classes.container}>
-                    <GridContainer justify="center">
-                        <GridItem xs={12} sm={6} md={4}>
-                            <Card className={classes[cardAnimaton]}>
-                                <form className={classes.form}>
-                                    <CardHeader color="info" className={classes.cardHeader}>
-                                        <h4>Portal de Agentes</h4>
-                                        <div
-                                            style={{
-                                                fontSize: "0.85rem",
-                                                opacity: 0.9,
-                                                marginTop: "4px"
-                                            }}
-                                        >
-                                            Acesso ao centro de controle de avistamentos
-                                        </div>
-                                        <div className={classes.socialLine}>
-                                            <Button
-                                                justIcon
-                                                href="#"
-                                                color="transparent"
-                                                onClick={(e) => e.preventDefault()}
-                                            >
-                                                <i className={"fas fa-satellite"} />
-                                            </Button>
+                      <Button
+                        justIcon
+                        href="#"
+                        color="transparent"
+                        onClick={(e) => e.preventDefault()}
+                      >
+                        <i className={"fas fa-globe-americas"} />
+                      </Button>
+                    </div>
+                  </CardHeader>
 
-                                            <Button
-                                                justIcon
-                                                href="#"
-                                                color="transparent"
-                                                onClick={(e) => e.preventDefault()}
-                                            >
-                                                <i className={"fas fa-globe-americas"} />
-                                            </Button>
-                                        </div>
-                                    </CardHeader>
+                  <p className={classes.divider}>Provide your credentials</p>
 
-                                    <p className={classes.divider}>
-                                        Use suas credenciais de agente
-                                    </p>
+                  <CardBody>
+                    <CustomInput
+                      labelText="Email"
+                      id="email"
+                      formControlProps={{
+                        fullWidth: true,
+                      }}
+                      inputProps={{
+                        type: "email",
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <Email className={classes.inputIconsColor} />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
 
-                                    <CardBody>
-                                        <CustomInput
-                                            labelText="Identificação do Agente"
-                                            id="agent-code"
-                                            formControlProps={{
-                                                fullWidth: true
-                                            }}
-                                            inputProps={{
-                                                type: "text",
-                                                endAdornment: (
-                                                    <InputAdornment position="end">
-                                                        <People className={classes.inputIconsColor} />
-                                                    </InputAdornment>
-                                                ),
-                                                autoComplete: "off"
-                                            }}
-                                        />
+                    <CustomInput
+                      labelText="Password"
+                      id="pass"
+                      formControlProps={{
+                        fullWidth: true,
+                      }}
+                      inputProps={{
+                        type: "password",
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <Icon className={classes.inputIconsColor}>
+                              lock_outline
+                            </Icon>
+                          </InputAdornment>
+                        ),
+                        autoComplete: "off",
+                      }}
+                    />
+                  </CardBody>
 
-                                        <CustomInput
-                                            labelText="Canal de Contato (Email)"
-                                            id="email"
-                                            formControlProps={{
-                                                fullWidth: true
-                                            }}
-                                            inputProps={{
-                                                type: "email",
-                                                endAdornment: (
-                                                    <InputAdornment position="end">
-                                                        <Email className={classes.inputIconsColor} />
-                                                    </InputAdornment>
-                                                )
-                                            }}
-                                        />
+                  <CardFooter className={classes.cardFooter}>
+                    <Button color="info" size="lg">
+                      Login
+                    </Button>
+                  </CardFooter>
 
-                                        <CustomInput
-                                            labelText="Chave de Acesso"
-                                            id="pass"
-                                            formControlProps={{
-                                                fullWidth: true
-                                            }}
-                                            inputProps={{
-                                                type: "password",
-                                                endAdornment: (
-                                                    <InputAdornment position="end">
-                                                        <Icon className={classes.inputIconsColor}>
-                                                            lock_outline
-                                                        </Icon>
-                                                    </InputAdornment>
-                                                ),
-                                                autoComplete: "off"
-                                            }}
-                                        />
-                                    </CardBody>
-
-                                    <CardFooter className={classes.cardFooter}>
-                                        <Button color="info" size="lg">
-                                            Entrar no Comando
-                                        </Button>
-                                    </CardFooter>
-
-                                    <div
-                                        style={{
-                                            textAlign: "center",
-                                            fontSize: "0.8rem",
-                                            marginBottom: "10px",
-                                            color: "rgba(100,155,255,0.8)"
-                                        }}
-                                    >
-                                        Tentativas suspeitas serão registradas pelos nossos
-                                        sensores intergalácticos 👽
-                                    </div>
-                                </form>
-                            </Card>
-                        </GridItem>
-                    </GridContainer>
-                </div>
-                <Footer whiteFont />
-            </div>
+                  <div
+                    style={{
+                      textAlign: "center",
+                      fontSize: "0.8rem",
+                      marginBottom: "10px",
+                      color: "rgba(100,155,255,0.8)",
+                    }}
+                  ></div>
+                </form>
+              </Card>
+            </GridItem>
+          </GridContainer>
         </div>
-    );
+        <Footer whiteFont />
+      </div>
+    </div>
+  );
 }
